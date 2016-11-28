@@ -1,4 +1,5 @@
 FROM ruby:2.3.1-alpine
+MAINTAINER BrowncoatShadow "https://github.com/BrowncoatShadow"
 
 RUN apk --no-cache add --virtual .stringer-build \
       git \
@@ -12,24 +13,25 @@ RUN apk --no-cache add --virtual .stringer-build \
     git clone https://github.com/swanson/stringer.git /stringer
 
 WORKDIR /stringer
+COPY . /stringer
+
+RUN git apply patches/*.patch
+
 RUN mkdir /data && \
+    echo "$RUBY_VERSION" > .ruby-version && \
     sed -i 's/^  gem "pg".*$/  gem "sqlite3", "~> 1.3", ">= 1.3.8"/' Gemfile && \
     sed -i "/^group :development do/,/^end/d" Gemfile && \
-    echo "gem 'foreman'" >> Gemfile && \
-    echo "gem 'rufus-scheduler'" >> Gemfile && \
-    echo "$RUBY_VERSION" > .ruby-version && \
-    bundle update && \
-    bundle config build.nokogiri --use-system-libraries && \
-    bundle install --no-cache --deployment && \
-    apk del .stringer-build && \
-    sed -i "s/^console/#console/" Procfile && \
-    echo "clock: ruby schedule.rb" >> Procfile
+    echo 'gem "rufus-scheduler"' >> Gemfile && \
+    echo 'gem "tzinfo-data"' >> Gemfile && \
+    sed -i '/^console/d' Procfile && \
+    echo 'clock: bundle exec ruby schedule.rb' >> Procfile
 
-COPY database.yml config/
-COPY schedule.rb .
-COPY docker-entrypoint.sh /
+RUN bundle config build.nokogiri --use-system-libraries && \
+    bundle install --no-cache --without test development && \
+    gem install --no-document foreman && \
+    apk del .stringer-build
 
 ENV RACK_ENV="production"
 EXPOSE 5000
-ENTRYPOINT ["/docker-entrypoint.sh"]
+ENTRYPOINT ["/stringer/docker-entrypoint.sh"]
 CMD ["foreman", "start"]

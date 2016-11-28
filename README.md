@@ -2,15 +2,14 @@ This is a Dockerfile for the [stringer](https://github.com/swanson/stringer) RSS
 
 ## Usage
 ```sh-session
-$ docker run -d --name stringer \
-    -p 5000:5000 \
-    -v stringer-data:/data \
-    -e STRINGER_FETCH_INTERVAL='10m' \
-    -e STRINGER_CLEANUP_INTERVAL='30d' \
-    browncoatshadow/stringer
+$ docker run -d --name stringer -p 5000:5000 -v stringer-data:/data browncoatshadow/stringer
 ```
 
-- `-p 5000:5000` publishes stringer's port.
-- `-v stringer-data:/data` creates a named persistent volume that holds stringer's database.
-- `-e STRINGER_FETCH_INTERVAL='10m'` sets the interval for fetching feeds.  Defaults to 10 minutes if not set.
-- `-e STRINGER_CLEANUP_INTERVAL='30d'` sets the interval for cleaning up old stories in the database. Defaults to 30 days if not set.
+### Environment Variables
+- `'STRINGER_FETCH_INTERVAL=10m'` Sets the interval for fetching feeds.  Defaults to 10 minutes if not set.
+- `'STRINGER_CLEANUP_INTERVAL=30d'` Sets the interval for cleaning up old stories in the database. Defaults to 30 days if not set.
+
+## Custom Patches
+I have included some custom patches for stringer in this image.
+- Unread news feed is sorted chronologically with oldest posts first.
+- Keyboard shortcuts for navigating feed lists do not loop around when reaching the end of a list.

@@ -1,0 +1,13 @@
+diff --git a/app/repositories/story_repository.rb b/app/repositories/story_repository.rb
+index 17e0e8b..3b31198 100644
+--- a/app/repositories/story_repository.rb
++++ b/app/repositories/story_repository.rb
+@@ -49,7 +49,7 @@ class StoryRepository
+   end
+ 
+   def self.unread
+-    Story.where(is_read: false).order("published desc").includes(:feed)
++    Story.where(is_read: false).order("published").includes(:feed)
+   end
+ 
+   def self.unread_since_id(since_id)

@@ -1,0 +1,29 @@
+diff --git a/app/public/js/app.js b/app/public/js/app.js
+index e94cb4a..29f5ef7 100644
+--- a/app/public/js/app.js
++++ b/app/public/js/app.js
+@@ -207,22 +207,12 @@ var StoryList = Backbone.Collection.extend({
+   },
+ 
+   moveCursorDown: function() {
+-    if (this.cursorPosition < this.max_position()) {
+-      this.cursorPosition++;
+-    } else {
+-      this.cursorPosition = 0;
+-    }
+-
++    if (this.cursorPosition < this.max_position()) this.cursorPosition++;
+     this.at(this.cursorPosition).select();
+   },
+ 
+   moveCursorUp: function() {
+-    if (this.cursorPosition > 0) {
+-      this.cursorPosition--;
+-    } else {
+-      this.cursorPosition = this.max_position();
+-    }
+-
++    if (this.cursorPosition > 0) this.cursorPosition--;
+     this.at(this.cursorPosition).select();
+   },
+ 
